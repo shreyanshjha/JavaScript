@@ -1,11 +1,11 @@
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-
 body {
-  background-color: rgb(255, 247, 201);
+  background-color: rgb(250, 249, 173);
   font-family: Arial;
   font-size: 20px;
   padding: 50px;
@@ -15,42 +15,37 @@ h1 {
   font-size: 35px;
   margin-bottom: 25px;
 }
-
 h2 {
   margin-bottom: 20px;
   text-align: center;
 }
-
 p {
   margin-bottom: 20px;
 }
-
 .first {
   color: red;
 }
 
 #your-name {
-  background-color: rgb(255, 220, 105);
+  background-color: rgb(247, 227, 95);
   border: 5px solid #444;
   width: 400px;
   padding: 25px;
   margin-top: 30px;
 }
 
-input,
-button {
+input, button {
   padding: 10px;
   font-size: 16px;
 }
 
 a {
-  background-color: yellowgreen;
+background-color:  yellowgreen;
 }
 
 #course-image {
-  width: 300px;
+  width: 200px;
 }
-
 #your-name h2 {
   color: olivedrab;
 }

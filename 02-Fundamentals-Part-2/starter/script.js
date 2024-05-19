@@ -356,23 +356,122 @@ TEST DATA: Marks weighs 78 kg and is 1.69 m tall. John weighs 92 kg and is 1.95 
 // }
 
 // ***** Iteration: The For Loop ***************///
+///////////////////////////////////////////////////////////
 // for loop keeps running while condition is TRUE
 // for(let resp = 1; resp <= 10; i++){
 //     console.log(`Lifting weights repetition ${i}`);
 // }
-const jonasArray = [
-    'Jonas',
-    'Schmedtman',
-    2037 - 1991,
-    'teacher',
-    ['Michael', 'Peter', 'Steven']
-]; 
+// const jonasArray = [
+//     'Jonas',
+//     'Schmedtman',
+//     2037 - 1991,
+//     'teacher',
+//     ['Michael', 'Peter', 'Steven'],
+//     true
+// ]; 
+
+// const types = [];
 
 //console.log(jonasArray[0]);
 //console.log(jonasArray[1]);
 //...
 //console.log(jonasArray[4]);
 //jonasArray[5] does NOT exist;
-for(let i = 0;i < 5; i++) {
-    console.log(jonasArray[i]);
+// for(let i = 0;i < jonasArray.length; i++) {
+//     // Reading from jonas array
+//     console.log(jonasArray[i], typeof jonasArray[i]);
+
+//     // Filling types array
+//     //types[i] = typeof jonasArray[i];
+//     types.push(typeof jonasArray[i]);
+// }
+// console.log(types);
+
+// const years = [1991, 2007, 1969, 2020];
+// const ages = [];
+
+// for(let i = 0; i < years.length; i++) {
+//     ages.push(2037 - years[i]);
+// }
+// console.log(ages);
+
+// // Continue and break
+// console.log('----ONLY STRING----');
+// for(let i = 0;i < jonasArray.length; i++) {
+//     if(typeof jonasArray[i] !== 'string')continue;
+//     console.log(jonasArray[i], typeof jonasArray[i]);
+// }
+
+// console.log('----BREAK WITH NUMBER----');
+// for(let i = 0;i < jonasArray.length; i++) {
+//     if(typeof jonasArray[i] === 'number')break;
+//     console.log(jonasArray[i], typeof jonasArray[i]);
+// }
+
+
+// const jonasArray = [
+//     'Jonas',
+//     'Schmedtman',
+//     2037 - 1991,
+//     'teacher',
+//     ['Michael', 'Peter', 'Steven'],
+//     true
+// ]; 
+// 5, 4, 3, ...., 0
+// for(let i = jonasArray.length - 1; i >= 0; i--){
+//     console.log(i, jonasArray[i]);
+// }
+
+// for(let exercise = 1; exercise < 4; exercise++) {
+//     console.log(`---------Starting exercise ${exercise}`);
+
+//     for (let rep = 1; rep < 6; rep++) {
+//         console.log(`${exercise} Lifting weight repetition ${rep}`);
+//     }
+// }
+
+// ***************** %%%%%%%%%%% **************** //
+///////////////// While Loop ///////////////////////
+// let rep = 1;
+// while(rep <= 10) {
+//     console.log(`Lifting weight repetition ${rep}`);
+//     rep++;
+// }
+
+// let dice = Math.trunc(Math.random() * 6) + 1;
+
+// while (dice !== 6) {
+//     console.log(`You rolled a ${dice}`);
+//     dice = Math.trunc(Math.random() * 6) + 1;
+//     if(dice === 6) console.log('Loop is about to end...');
+// }
+
+let bills = [22, 295, 176, 440, 37, 105, 10, 1100, 86, 52];
+let tips = [];
+let totals = [];
+
+function calcTip(bill) {
+    return bill >= 50 && bill <= 300 ? bill * 0.15 : bill * 0.2;
 }
+
+for(let i = 0; i < bills.length; i++) {
+    // output is correct but didn't passed test case
+    //tips.push(this.calcTip(bills[i]));
+    //totals.push(bills[i] + tips[i]);
+    const tip = calcTip(bills[i]);
+    tips.push(tip);
+    totals.push(tip + bills[i]);
+}
+console.log(tips);
+console.log(totals);
+
+function calcAverage(arr) {
+    let sum = 0;
+    for(let i = 0; i < arr.length; i++) {
+        //sum = sum + arr[i];
+        sum += arr[i];
+    }
+    return sum / arr.length;
+}
+
+console.log(calcAverage(totals));
