@@ -38,8 +38,46 @@ const restaurant = {
 
   orderPassta: function(ing1, ing2, ing3) {
     console.log(`Here is your declicious pasta with  ${ing1}, ${ing2}, ${ing3}`);
+  },
+
+  orderPizza: function(mainIngredient, ...otherIngredients) {
+    console.log(mainIngredient);
+    console.log(otherIngredients);
   }
 };
+// 1) Destructuring
+// Spread operator, on RIGHT side of =
+const arr = [1, 2, ...[3, 4]];
+
+// REST, beacause on LEFT side of =
+const [a, b, ...others] = [1, 2, 3, 4, 5];
+console.log(a, b, others);
+
+const [pizza, , ri, ...otherFood] = [...restaurant.mainMenu, ...restaurant.starterMenu];
+console.log(pizza, ri, otherFood);
+
+//Objects
+const {sat, ...weekdays} = restaurant.openingHours;
+console.log(sat, weekdays);
+
+// 2) Functions
+const add = function(...numbers) {
+  let sum = 0;
+  for(let i = 0; i<numbers.length; i++) sum += numbers[i];
+  console.log(sum);
+}
+
+add(2, 3);
+add(5,3,7,2);
+add(8, 2, 5, 3, 2, 1, 4);
+
+const x = [23, 4, 5];
+add(...x);
+
+restaurant.orderPizza('mushrooms', 'onion', 'olives', 'spinach');
+
+/////////////////////////////////////////////////
+/* The Spread Operator (...)
 
 const arr = [7, 8, 9];
 const badNewArr = [1, 2, arr[0], arr[1], arr[2]];
@@ -87,6 +125,8 @@ const restaurantCopy = {...restaurant};
 restaurantCopy.name = 'Ristorante Roma';
 console.log(restaurantCopy.name);
 console.log(restaurant.name);
+*/
+
 
 /****************
  * ******** Destructuring Objects
@@ -168,7 +208,10 @@ console.log(i , j, k);
 // Default values
 const[p = 1 , q = 1, r = 1] = [8 , 9];
 console.log(p, q, r);
+*/
 
+
+// --------------------------------------------------------------------------------------------------
 // Assignments
 const books = [
   {
@@ -353,8 +396,8 @@ const books = [
     highlighted: true
   }
 ];
-
-const [firstBook, secondBook] = books;
+// Destructure Array
+/*const [firstBook, secondBook] = books;
 console.log(firstBook, secondBook);
 
 const [ , , thirdBook] = books;
@@ -366,5 +409,46 @@ const [[, rating], [, ratingsCount]] = ratings;
 console.log(rating, ratingsCount);
 
 const [fiveStarRatings = 0, oneStarRatings = 0, threeStarRatings = 0] = [63405, 1808];
-console.log(fiveStarRatings, oneStarRatings, threeStarRatings);
-*/
+console.log(fiveStarRatings, oneStarRatings, threeStarRatings);*/
+
+// Destructure Object
+/*const { title, author, ISBN} = books[0];
+console.log(title, author, ISBN);
+
+const {keywords: tags} = books[0];
+console.log(tags);
+
+const {language, programmingLanguage = 'unknown'} = books[6];
+console.log(language, programmingLanguage);
+
+let bookTitle = 'unknown';
+let bookAuthor = 'unknown';
+
+({title: bookTitle, author: bookAuthor} = books[0]);
+console.log(bookTitle, bookAuthor);
+
+const {thirdParty: {goodreads: {rating: bookRating}}} = books[0];
+console.log(bookRating);*/
+
+/////////// The spread opreator ///////////
+/*const bookAuthors = [...books[0].author, ...books[1].author];
+console.log(bookAuthors);
+
+function spellWord(data = 'JavaScript') {
+  console.log(...data);
+}
+spellWord();*/
+
+
+// REST Assignements
+/*const [mainKeyword, ...rest] = books[0].keywords;
+console.log(mainKeyword, rest);
+
+const {publisher: bookPublisher, ...restOfTheBook} = books[1];
+console.log(bookPublisher, restOfTheBook);
+
+function printBookAuthorsCount(title, ...authors) {
+ console.log(`The book ${title} has ${authors.length} authors`);
+}
+
+printBookAuthorsCount('Algorithms', 'Robert Sedgewick', 'Kevin Wayne');*/
