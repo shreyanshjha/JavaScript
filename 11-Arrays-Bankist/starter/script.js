@@ -110,6 +110,41 @@ function calcPrintBalance(movements) {
 
 calcPrintBalance(account1.movements);
 
+function calcDisplaySummary(movements) {
+  const income = movements.filter(mov => mov > 0).reduce((acc, cur) => acc + cur, 0);
+  labelSumIn.textContent = `${income}€`;
+
+  const outgoing = movements.filter(mov => mov < 0).reduce((acc, cur) => acc + cur, 0);
+  labelSumOut.textContent = `${Math.abs(outgoing)}€`;
+
+  const interest = movements.filter(mov => mov > 0)
+    .map(deposit => deposit * 1.2/100)
+    .filter(dep => dep >= 1)
+    .reduce((acc, cur) => acc + cur, 0);
+  
+  labelSumInterest.textContent = `${interest}€`;
+}
+calcDisplaySummary(account1.movements);
+///////////////////////////////////////
+// Coding Challenge #3
+
+/* 
+Rewrite the 'calcAverageHumanAge' function from the previous challenge, 
+but this time as an arrow function, and using chaining!
+
+TEST DATA 1: [5, 2, 4, 1, 15, 8, 3]
+TEST DATA 2: [16, 6, 10, 5, 6, 1, 4]
+
+GOOD LUCK 😀
+*/
+function calcAverageHumanAge1(dogAges) {
+  return dogAges.map((age) => age <= 2 ? 2 * age : 16 + age * 4)
+  .filter(age => age > 18).reduce((acc, cur, i ,arr) => acc + cur / arr.length, 0);
+}
+const age3 = calcAverageHumanAge1([5, 2, 4, 1, 15, 8, 3]);
+const age4 = calcAverageHumanAge1([16, 6, 10, 5, 6, 1, 4]);
+console.log(age3, age4);
+
 ///////////////////////////////////////
 // Coding Challenge #2
 
