@@ -71,19 +71,36 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 
 
-function displayMovements(movements) {
+function displayMovements(movements, sort = false) {
   containerMovements.innerHTML = '';
-  movements.forEach((mov, i) => {
+
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  movs.forEach((mov, i) => {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `
         <div class="movements__row">
           <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
-          <div class="movements__value">${mov}</div>
+          <div class="movements__value">${mov}€</div>
         </div>
     `;
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
+}
+let sorted = false;
+btnSort.addEventListener('click', function(e) {
+  e.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
+})
+
+function updateUI(acc) {
+   // Display movements
+   displayMovements(acc.movements);
+   // Display balance
+   calcPrintBalance(acc);
+   // Display summary
+   calcDisplaySummary(acc);
 }
 
 function createUserNames(accs) {
@@ -97,11 +114,11 @@ function createUserNames(accs) {
 }
 createUserNames(accounts);
 
-function calcPrintBalance(movements) {
-  const balance = movements.reduce((acc, mov) => {
+function calcPrintBalance(acc) {
+  acc.balance = acc.movements.reduce((acc, mov) => {
     return acc + mov
   }, 0);
-  labelBalance.textContent = `${balance} EUR`;
+  labelBalance.textContent = `${acc.balance} €`;
 }
 
 function calcDisplaySummary(account) {
@@ -133,15 +150,281 @@ btnLogin.addEventListener('click', function(e) {
     // Display UI and message
     labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`;
     containerApp.style.opacity = 100;
-    // Display movements
-    displayMovements(currentAccount.movements);
-    // Display balance
-    calcPrintBalance(currentAccount.movements);
-    // Display summary
-    calcDisplaySummary(currentAccount);
+   
+    // Update UI:- display movements, balance, summary
+    updateUI(currentAccount);
   }
 });
+btnTransfer.addEventListener('click', function(e){
+  e.preventDefault();
+  const amount = Number(inputTransferAmount.value);
+  const receiverAcc = accounts.find(acc => acc.username === inputTransferTo.value);
 
+  if(amount > 0 && receiverAcc && currentAccount.balance >= amount
+    && receiverAcc?.username !== currentAccount.username) {
+      currentAccount.movements.push(-amount);
+      receiverAcc.movements.push(amount);
+
+      // Update UI:- display movements, balance, summary
+      updateUI(currentAccount);
+  }
+  inputTransferAmount.value = inputTransferTo.value = '';
+});
+
+btnClose.addEventListener('click', function(e) {
+  e.preventDefault();
+  if(currentAccount.username === inputCloseUsername.value && currentAccount.pin === Number(inputClosePin.value)) {
+    const index = accounts.findIndex(acc => acc.username === currentAccount.username);
+
+    // Delete account
+    accounts.splice(index, 1);
+
+    // Hide UI
+    containerApp.style.opacity = 0;
+  }
+  // Clear input fields
+  inputCloseUsername.value = inputClosePin.value = "";
+});
+
+btnLoan.addEventListener('click', function(e) {
+  e.preventDefault();
+  const amount = Number(inputLoanAmount.value);
+
+  if(amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
+    // Add movement
+    currentAccount.movements.push(amount);
+    // Update UI:- display movements, balance, summary
+    updateUI(currentAccount);
+  }
+  inputLoanAmount.value = "";
+});
+////////////////////////////////////////////////////
+// Array Methods Practice
+
+// 1.
+//const bankDepositsSum = accounts.map(acc => acc.movements).flat();
+// const bankDepositsSum = accounts.flatMap(acc => acc.movements)
+// .filter(mov => mov > 0)
+// .reduce((sum, cur) => sum + cur, 0);
+
+// console.log(bankDepositsSum);
+
+// 2.
+// const numDeposits1000 = accounts.flatMap(acc => acc.movements)
+// .filter(m => m >= 1000).length;
+//console.log(numDeposits1000);
+// const numDeposits1000 = accounts.flatMap(acc => acc.movements).reduce((acc, mov) => {
+//   return mov >= 1000 ? ++acc : acc;
+// }, 0);
+// console.log(numDeposits1000);
+
+// 3.
+// const sum = accounts.flatMap(acc => acc.movements).reduce((acc, cur) => {
+//   //cur > 0 ? acc.deposits += cur : acc.withdrawals += Math.abs(cur);
+//   acc[cur > 0 ? 'deposits' : 'withdrawals'] += Math.abs(cur);
+//   return acc;
+// }, { deposits: 0, withdrawals: 0});
+// console.log(sum);
+
+// 4.
+// this is a nice title => This Is a Nice Title
+// function convertTitleCase(title) {
+//   function capitalize(str) {
+//     return str[0].toUpperCase() + str.slice(1)
+//   }
+//   const exceptions = ['a', 'an', 'and', 'the', 'but', 'or', 'on', 'in', 'with'];
+//   const titleCase = title.toLowerCase().split(' ')
+//   .map(word => exceptions.includes(word) ? word : capitalize(word))
+//   .join(' ');
+//   return capitalize(titleCase);
+// }
+// console.log(convertTitleCase("this is a nice title"));
+// console.log(convertTitleCase("this is a LONG title but not too good"));
+// console.log(convertTitleCase("and here is another title with an EXAMPLE"));
+
+///////////////////////////////////////
+// Coding Challenge #4
+
+/* 
+Julia and Kate are still studying dogs, and this time they are studying if dogs are eating too 
+much or too little.
+Eating too much means the dog's current food portion is larger than the recommended portion, 
+and eating too little is the opposite.
+Eating an okay amount means the dog's current food portion is within a range 10% above and 10% 
+below the recommended portion (see hint).
+
+1. Loop over the array containing dog objects, and for each dog, calculate the recommended 
+  food portion and add it to the object as a new property. Do NOT create a new array, simply 
+  loop over the array. Forumla: recommendedFood = weight ** 0.75 * 28. (The result is in grams 
+  of food, and the weight needs to be in kg)
+2. Find Sarah's dog and log to the console whether it's eating too much or too little. 
+  HINT: Some dogs have multiple owners, so you first need to find Sarah in the owners array, 
+  and so this one is a bit tricky (on purpose) 🤓
+3. Create an array containing all owners of dogs who eat too much ('ownersEatTooMuch') and an 
+   array with all owners of dogs who eat too little ('ownersEatTooLittle').
+4. Log a string to the console for each array created in 3., like this: "Matilda and Alice and 
+   Bob's dogs eat too much!" and "Sarah and John and Michael's dogs eat too little!"
+5. Log to the console whether there is any dog eating EXACTLY the amount of food that is 
+   recommended (just true or false)
+6. Log to the console whether there is any dog eating an OKAY amount of food (just true or false)
+7. Create an array containing the dogs that are eating an OKAY amount of food (try to reuse 
+   the condition used in 6.)
+8. Create a shallow copy of the dogs array and sort it by recommended food portion in an 
+   ascending order (keep in mind that the portions are inside the array's objects)
+
+HINT 1: Use many different tools to solve these challenges, you can use the summary lecture to 
+choose between them 😉
+HINT 2: Being within a range 10% above and below the recommended portion 
+means: current > (recommended * 0.90) && current < (recommended * 1.10). Basically, the current 
+portion should be between 90% and 110% of the recommended portion.
+
+GOOD LUCK 😀
+*/
+const dogs = [
+  { weight: 22, curFood: 250, owners: ['Alice', 'Bob'] },
+  { weight: 8, curFood: 200, owners: ['Matilda'] },
+  { weight: 13, curFood: 275, owners: ['Sarah', 'John'] },
+  { weight: 32, curFood: 340, owners: ['Michael'] }
+];
+
+// 1.
+dogs.forEach((dog) => {
+  dog.recommendedFood = Math.trunc(dog.weight ** 0.75 * 28);
+});
+console.log(dogs);
+// 2.
+//const sarahDog = dogs.find(dog => dog.owners.some(d => d === 'Sarah'));
+const sarahDog = dogs.find(dog => dog.owners.includes('Sarah'));
+console.log(sarahDog);
+// 3.
+const ownersEatTooMuch = dogs.filter(dog => dog.curFood > dog.recommendedFood)
+                          .flatMap(d => d.owners);
+console.log(ownersEatTooMuch);
+const ownersEatTooLittle = dogs.filter(dog => dog.curFood < dog.recommendedFood)
+                          .flatMap(d => d.owners);;
+console.log(ownersEatTooLittle);
+
+// 4.
+console.log(`${ownersEatTooMuch.join(' and ')}'s dogs eat too much!`);
+console.log(`${ownersEatTooLittle.join(' and ')}'s dogs eat too little!`);
+// 5.
+const data1 = dogs.some(dog => dog.curFood === dog.recommendedFood);
+console.log(data1);
+
+// 6.
+function okayAmountOfFood(dog) {
+  return dog.curFood > (dog.recommendedFood * 0.90) && dog.curFood < (dog.recommendedFood * 1.10)
+};
+console.log(dogs.some( dog => okayAmountOfFood(dog)));
+// above line is equivalent to console.log(dogs.some(okayAmountOfFood));
+
+// 7.
+const newDogsArray = dogs.filter((dog) => {
+   return okayAmountOfFood(dog);;
+});
+console.log(newDogsArray);
+
+// 8.
+const dogsShallowCopyShort = dogs.slice().sort((a , b) => {
+  if(a.recommendedFood > b.recommendedFood) return 1;
+  if(a.recommendedFood < b.recommendedFood) return -1;
+});
+console.log(dogsShallowCopyShort);
+
+////////////////////////////////////////////////////
+// Strings
+// const owners = ['Jonas', 'Zach', 'Adam', 'Martha'];
+// console.log(owners.sort());
+// console.log(owners);
+// Numbers
+//console.log(movements);
+
+// return < 0 A, B (keep order)
+// return > 0 B, A (switch order)
+
+// Ascending
+// movements.sort((a, b) => {
+//   console.log(`Comparing ${a} and ${b}`);
+//   if(a > b) return 1;
+//   if(a < b) return -1;
+// });
+//movements.sort(a, b => a - b);
+// console.log(movements);
+
+// Descending
+// movements.sort((a, b) => {
+//   if(a > b) return -1;
+//   if(a > b) return 1;
+// });
+//movements.sort(a, b => b - a);
+// console.log(movements);
+
+// Empty arrays + fill method
+// const arr = new Array(7);
+// arr.fill(1);
+// console.log(arr);
+// arr.fill(2, 4, 6);
+// console.log(arr);
+// console.log(" //////////// Array From /////////// ");
+// const d = Array.from({length: 7}, () => 1);
+// console.log(d);
+// const z = Array.from({length: 7}, (curr, i) => i+1);
+// console.log(z);
+
+// labelBalance.addEventListener('click', function() {
+//   const movementsUI = Array.from(
+//     document.querySelectorAll('.movements__value'),
+//     el => Number(el.textContent.replace("€", ""))
+//   );
+//   console.log(movementsUI);
+
+//   const movementsUI2 = [...document.querySelectorAll('.movements__value')];
+//   console.log(movementsUI2);
+// })
+
+////////////////////////////////////////////////////
+// Flat method
+
+// const arr = [[1, 2, 3], 4 , 5, [6, 7 ,8]];
+// console.log(arr.flat());
+// const arrDeep = [[[1, 2], 3], 4 , 5, [6, 7 ,8]];
+// console.log(arrDeep.flat(2));
+
+// const accountMovements = accounts.map(acc => acc.movements);
+// console.log(accountMovements);
+// const flatMovements = accountMovements.flat();
+// console.log(flatMovements);
+// const calculateTotalBalance = flatMovements.reduce((acc, cur) => {return acc + cur}, 0);
+// console.log(calculateTotalBalance);
+
+// const overalBalance = accounts
+// .map(acc => acc.movements)
+// .flat()
+// .reduce((acc, cur) => {return acc + cur}, 0);
+// console.log(overalBalance);
+
+// The key difference between flatMap and flat is that flatMap will only flatten one level deep. 
+//But in flat method we can decide the level of depth we want to flatten example:- flat(3) so 3 levels deep.
+// flatMap
+// const overalBalance2 = accounts
+// .flatMap(acc => acc.movements)
+// .reduce((acc, cur) => {return acc + cur}, 0);
+// console.log(overalBalance2);
+
+////////////////////////////////////////////////////
+/* EVERY 
+console.log(movements.every(mov => mov > 0));
+console.log(account4.movements.every(mov => mov > 0));
+
+// Separate Callbacks function
+function deposit(mov) {
+  return mov > 0;
+}
+
+console.log(movements.some(deposit));
+console.log(movements.every(deposit));
+console.log(movements.filter(deposit));
+*/
 ///////////////////////////////////////////////////
 // Find method
 /*const firstWithdrawal = movements.find(mov => mov < 0);
