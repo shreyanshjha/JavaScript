@@ -11,8 +11,8 @@ const Person = function(firstName, birthYear) {
     // };
 }
 
-const sj = new Person('Jonas', 1991);
-console.log(sj);
+const jonas = new Person('Jonas', 1991);
+console.log(jonas);
 // 1. New {} is created
 // 2. function is called, this = {}
 // 3. {} linked to prototype
@@ -29,5 +29,17 @@ console.log(Person.prototype);
 Person.prototype.calcAge = function() {
     console.log(2037 - this.birthYear);
 };
-sj.calcAge();
+jonas.calcAge();
 jack.calcAge();
+
+console.log(jonas.__proto__);
+console.log(jonas.__proto__ === Person.prototype);
+console.log(Person.prototype.isPrototypeOf(jonas));
+console.log(Person.prototype.isPrototypeOf(matilda));
+console.log(Person.prototype.isPrototypeOf(Person));
+
+Person.prototype.species = 'Homo Sapines';
+console.log(jonas.species, matilda.species);
+
+console.log(jonas.hasOwnProperty('firstName'));
+console.log(jonas.hasOwnProperty('species'));// false bcoz species are in prototype but in above console we were able to acces metilda.species bcoz javascript internally accessing
